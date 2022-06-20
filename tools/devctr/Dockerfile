@@ -35,7 +35,7 @@ RUN apt-get update \
         # libsqlite3-dev \
         # wget \
         # libbz2-dev \
-        # curl \
+         curl \
         # file \
         # g++ \
         # gcc \
@@ -57,7 +57,8 @@ RUN apt-get update \
         # python3 \
         # python3-pip \
         tmux \
-	neovim
+	neovim \
+	fzf
 
 RUN apt-get -y install software-properties-common
 RUN apt-add-repository ppa:fish-shell/release-3 
@@ -99,9 +100,21 @@ RUN chmod +x /sbin/tini
 
 #ADD docker-startup-cmds.sh /home/mahesh/git/amatus/tools/devctr/docdocker-startup-cmds.sh
 
-COPY /tools/devctr/entrypoint.sh /entrypoint.sh
+RUN mkdir $HOME/.config
+RUN mkdir $HOME/.config/nvim
+#WORKDIR ~/.config/nvim
 
-RUN chmod +x entrypoint.sh
+COPY /tools/devctr/init.vim /init.vim
+RUN cp /init.vim $HOME/.config/nvim/init.vim
+
+#RUN chmod +x /init.vim 
+
+COPY /tools/devctr/docker-entrypoint.sh /docker-entrypoint.sh
+#WORKDIR /
+
+RUN chmod +x docker-entrypoint.sh
 
 WORKDIR "$AT_SRC_DIR"
-ENTRYPOINT ["/entrypoint.sh"]
+
+ENTRYPOINT ["/sbin/tini", "--", "/docker-entrypoint.sh"]
+
