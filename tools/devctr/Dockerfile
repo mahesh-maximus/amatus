@@ -40,7 +40,7 @@ RUN apt-get update \
         # g++ \
         # gcc \
         # gcc-aarch64-linux-gnu \
-        # git \
+         git \
         # iperf3 \
         # iproute2 \
         # jq \
@@ -103,6 +103,9 @@ RUN chmod +x /sbin/tini
 RUN mkdir $HOME/.config
 RUN mkdir $HOME/.config/nvim
 #WORKDIR ~/.config/nvim
+
+RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 COPY /tools/devctr/init.vim /init.vim
 RUN cp /init.vim $HOME/.config/nvim/init.vim
