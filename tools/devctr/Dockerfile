@@ -110,10 +110,9 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
 COPY /tools/devctr/init.vim /init.vim
 RUN cp /init.vim $HOME/.config/nvim/init.vim
 
-#RUN chmod +x /init.vim 
+RUN nvim --headless +PlugInstall +qall
 
 COPY /tools/devctr/docker-entrypoint.sh /docker-entrypoint.sh
-#WORKDIR /
 
 RUN chmod +x docker-entrypoint.sh
 
