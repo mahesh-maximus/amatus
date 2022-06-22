@@ -139,14 +139,13 @@ ensure_docker() {
 # available on this system.
 #
 ensure_devctr() {
-
     # We depend on having Docker present.
     ensure_docker
 
     # Check if we have the container image available locally. Attempt to
     # download it, if we don't.
     [[ $(docker images -q "$DEVCTR_IMAGE" | wc -l) -gt 0 ]] || {
-        say "About to pull docker image $DEVCTR_IMAGE"
+        say "About to create new docker image $DEVCTR_IMAGE"
         get_user_confirmation || die "Aborted."
 
         # Run docker pull 5 times in case it fails - sleep 3 seconds
@@ -155,6 +154,13 @@ ensure_devctr() {
 
         ok_or_die "Error building docker image. Aborting."
     }
+
+    say "About to rebuild docker image $DEVCTR_IMAGE"
+    get_user_confirmation || die "Aborted."
+
+    retry_cmd cmd_build_devctr 5 3
+
+    ok_or_die "Error building docker image. Aborting."
 }
 
 # Prompt the user for confirmation before proceeding.

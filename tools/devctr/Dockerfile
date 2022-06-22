@@ -21,44 +21,16 @@ ENV PATH="$PATH:$CARGO_HOME/bin"
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends \
-         binutils-dev \
-         # Needed in order to be able to compile `userfaultfd-sys`.
-         clang \
-         cmake \
+	 binutils-dev \
          build-essential \
-         zlib1g-dev \
-         libncurses5-dev \
-         libgdbm-dev  \
-         libnss3-dev \
-         libreadline-dev \
-         libffi-dev \
-         libsqlite3-dev \
          wget \
-         libbz2-dev \
          curl \
-         file \
-         g++ \
-         gcc \
-         gcc-aarch64-linux-gnu \
          git \
-         iperf3 \
-         iproute2 \
-         jq \
-         libdw-dev \
-         libiberty-dev \
-         libssl-dev \
-         libcurl4-openssl-dev \
-         lsof \
-         make \
-         musl-tools \
-         net-tools \
-         openssh-client \
-         pkgconf \
          python3 \
-        python3-pip \
-        tmux \
-	neovim \
-	fzf
+       	 python3-pip \
+       	 tmux \
+	 neovim \
+	 fzf 
 
 RUN apt-get -y install software-properties-common
 RUN apt-add-repository ppa:fish-shell/release-3 
@@ -78,15 +50,8 @@ RUN apt -y install fish
  RUN mkdir "$TMP_BUILD_DIR" \
      && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN" \
          && rustup target add x86_64-unknown-linux-musl \
-         && rustup component add rustfmt \
-         && rustup component add clippy-preview \
          && rustup install "stable" \
          && cd "$TMP_BUILD_DIR" \
-             && cargo install cargo-kcov \
-             && cargo +"stable" install cargo-audit \
-             # Fix a version that does not require cargo edition 2021.
-             && cargo install --locked cargo-deny --version '^0.9.1' \
-             && cargo kcov --print-install-kcov-sh | sh \
          && rm -rf "$CARGO_HOME/registry" \
          && ln -s "$CARGO_REGISTRY_DIR" "$CARGO_HOME/registry" \
          && rm -rf "$CARGO_HOME/git" \
